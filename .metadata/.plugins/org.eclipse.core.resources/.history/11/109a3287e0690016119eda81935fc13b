@@ -1,0 +1,46 @@
+import java.util.Scanner;
+
+public class Calculator {
+
+	public static void main(String[] args) {
+	
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Enter something to calculate!: ");
+		
+		float first, second, answer;
+		char operator;
+		
+		while(true){
+		
+		first = scan.nextFloat();
+		operator = scan.next().charAt(0);
+		second = scan.nextFloat();
+		
+		switch(operator){
+		case '+':
+			answer = first += second;
+			System.out.println(answer);
+			break;
+			
+		case '-':
+			answer = first -= second;
+			System.out.println(answer);
+			break;
+			
+		case '*':
+			answer = first *= second;
+			System.out.println(answer);
+			break;
+			
+		case '/':
+			answer = first /= second;
+			System.out.println(answer);
+			break;
+			
+			default:
+				System.out.println("Bad input! Try again!");
+				break;
+		}
+		}
+	}
+}

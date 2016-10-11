@@ -1,0 +1,65 @@
+import java.util.Scanner;
+
+public class Calculator {
+
+	public static void main(String[] args) {
+	
+		Scanner scan = new Scanner(System.in);		
+		Float first, second, answer;
+		Character operator, yOrN;
+		
+		//checks if the while loops should keep on going
+		Boolean tryAgain = true;
+		
+		while(tryAgain){
+			System.out.println("Enter something to calculate!: ");
+		
+			first = scan.nextFloat();
+			operator = scan.next().charAt(0);
+			second = scan.nextFloat();
+			if(first instanceof Float && second instanceof Float){
+			switch(operator){
+			case '+':
+				answer = first += second;
+				System.out.println(answer);
+				break;
+				
+			case '-':
+				answer = first -= second;
+				System.out.println(answer);
+				break;
+				
+			case '*':
+				answer = first *= second;
+				System.out.println(answer);
+				break;
+				
+			case '/':
+				answer = first /= second;
+				System.out.println(answer);
+				break;
+				
+			default:
+				System.out.println("Bad input!");
+				break;
+			}
+			
+			System.out.println("Do you want to try again? y/n");
+			yOrN = scan.next().charAt(0);
+			
+			System.out.println(yOrN.getClass().getName());
+			
+			if(yOrN == 'n')
+			{
+				tryAgain = false;
+			}
+			}
+			else
+			{
+				System.out.println("TRY AGAIN");
+			}
+		}
+		
+		System.out.println("Thanks for using this program!");
+	}
+}
