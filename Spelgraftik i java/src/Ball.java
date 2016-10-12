@@ -2,22 +2,26 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.*;
 
 import javax.imageio.ImageIO;
 public class Ball {
 	
 	private int d = 30;
-	private int posX, startX, startMoveX;
-	private int posY, startY, startMoveY;
-	private int moveX, moveY, speed;
+	private int posX, startX;
+	private double startMoveY, startMoveX;
+	private int posY, startY;
+	private double moveX;
+	private float speed;
+	private double moveY;
 	private BallGame game;
 	private Racket racket;
 	private Racket racket2;
-	private int collissionCounter = 0;
-	private int ballNumber;
+	private float collissionCounter = 0;
+	private float ballNumber;
 	private BufferedImage image;
 	
-	public Ball(BallGame game, int ballNr, int x, int y, int beginMoveX, int beginMoveY, String path){
+	public Ball(BallGame game, int ballNr, int x, int y, double beginMoveX, double beginMoveY, String path){
 		this.game = game;
 		startX = posX = x;
 		startY = posY = y;
@@ -57,28 +61,39 @@ public class Ball {
 				if(posX - moveX >= game.racket.getX() + game.racket.getWidth()){
 					moveX = -moveX;
 					moveY = game.racket.getMoveY();
+					
 				}
-				else
+				else if(if ifisdifsd)
 				{
-					moveX = 3;
+					moveX = -moveX;
 					moveY = -moveY;
-				}				
+				}
+						
 			}
 			if(collission2()){
 				if(posX -moveX <= game.racket2.getX() - d){
 					moveX = -moveX;
-					//moveY = (game.racket2.getMoveY());
+					moveY = (game.racket2.getMoveY());					
 				}
-				else {
-					moveX = -3;
+				else
+				{
+					moveX = -moveX;
 					moveY = -moveY;
 				}
+				
 			}
 			
 			if(collissionBall()){
-				if(game.ball.posX + d <= game.ball2.posX || game.ball2.posX + d >= game.ball.posX)
+				float distance = ((game.ball.posX- game.ball2.posX)* (game.ball.posX- game.ball2.posX));
+				float radiDistance = (game.ball.d / 2 + game.ball2.d / 2) * (game.ball.d / 2 + game.ball2.d / 2);
+				
+				if(distance < radiDistance)
 				{
-					moveX = -moveX;
+					double newVelX1 = (game.ball.moveX * (game.ball.d  /2 - game.ball2.d /2) + (game.ball2.d * game.ball2.moveX)) / (game.ball.d / 2 + game.ball2.d / 2);
+					double newVelX2 = (game.ball2.moveX * (game.ball2.d  /2 - game.ball.d /2) + (game.ball.d * game.ball.moveX)) / (game.ball2.d / 2 + game.ball.d / 2);
+					
+					game.ball.moveX = newVelX1;
+					game.ball2.moveX = newVelX2;
 				}
 			}
 			posX += moveX;
@@ -86,10 +101,9 @@ public class Ball {
 					
 	}
 	
-	
 	public void paint(Graphics2D g){
-		//g.fillOval(posX, posY, d, d);
-		g.drawImage(image, posX, posY, null);
+		g.fillOval(posX, posY, d, d);
+		
 	}
 	
 	private Rectangle getBounds(){

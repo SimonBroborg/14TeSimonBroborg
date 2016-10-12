@@ -17,7 +17,6 @@ public class Racket {
 		
 		if(rackets == 2)
 		{
-			height = 480;
 			startX = x = 540;
 			startY = y = 240 - height/2;
 		}
