@@ -1,0 +1,6 @@
+
+public class Truck extends Vehicles{
+	public Truck(){
+		System.out.println("This is a truck");
+	}
+}

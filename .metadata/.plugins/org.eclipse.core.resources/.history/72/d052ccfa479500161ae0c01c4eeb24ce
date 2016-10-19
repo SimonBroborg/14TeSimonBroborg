@@ -1,0 +1,12 @@
+
+public class Vehicles {
+	public static void main(String args[]){
+		Car bughatti = new Car();
+		
+		bughatti.gas(10);;
+	}
+	
+	public void gas(float gas){
+		System.out.println(gas);
+	}
+}

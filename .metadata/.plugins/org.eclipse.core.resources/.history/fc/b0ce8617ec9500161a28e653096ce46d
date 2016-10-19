@@ -1,0 +1,62 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.util.Scanner;
+import java.util.ArrayList;
+
+public class Main extends JPanel{
+	static Scanner sc = new Scanner(System.in);
+	
+	public static void main(String[] args){
+		Vehicles car = new Car(100, 1584, "red");
+		Vehicles bike = new Bicycle(10, 100, "blue");
+		Vehicles truck = new Truck(1000, 1230, "black");
+		
+		ArrayList<Vehicles> vehicles = new ArrayList();
+		vehicles.add(car);
+		vehicles.add(bike);
+		vehicles.add(truck);
+		String j;
+		while(true){
+			j = sc.nextLine();
+			while(j != ""){
+					switch(j){
+						case "car":
+							j = sc.nextLine();
+							switch(j){
+								case "color":
+									System.out.println(car.getColor());
+									break;
+							}
+							j = "";
+							break;
+							
+						case "bike":
+							j = sc.nextLine();
+							switch(j){
+								case "color":
+									System.out.println(bike.getColor());
+									break;
+							}
+							j = "";
+							break;
+		
+						case "truck":
+							j = sc.nextLine();
+							switch(j){
+								case "color":
+									System.out.println(truck.getColor());
+									break;
+							}
+							j = "";
+							break;
+					}
+					
+					
+				
+				
+			}
+		}
+	}
+	
+}

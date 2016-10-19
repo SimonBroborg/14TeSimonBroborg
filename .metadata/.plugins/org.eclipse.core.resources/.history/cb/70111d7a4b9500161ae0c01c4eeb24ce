@@ -1,0 +1,22 @@
+
+public abstract class Vehicles {
+	private String color; //the color of the vehicle
+	private float price; //the price of the vehicle swedish crowns
+	private float weight; //the weight of the vehicle in kilograms
+	
+	public String setColor(String newColor){
+		color = newColor;
+		return color;
+	}
+	
+	
+	
+	public float getPrice(){
+		return price;
+	}
+	
+	public float getWeight(){
+		return weight;
+	}
+	
+}
