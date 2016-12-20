@@ -1,0 +1,37 @@
+
+public class Shape {
+	
+	public static void main(String[]args){
+		Triangle triangle = new Triangle(4.0, 6.0);
+		Rectangle rect = new Rectangle(4.0, 6.0);
+		
+		System.out.println(triangle.getArea());
+		System.out.println(rect.getArea());
+	}
+	
+	private double height;
+	private double width;
+	private double area;
+	
+	
+	public double getHeight(){
+		return height;
+	}
+	public void setHeight(double height){
+		this.height = height;
+	}
+	
+	public double getWidth(){
+		return width;
+	}
+	public void setWidth(double width){
+		this.width = width;
+	}
+	
+	public double getArea(){
+		return area;
+	}
+	public void setArea(double area){
+		this.area = area;
+	}
+}

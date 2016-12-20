@@ -1,0 +1,14 @@
+
+public class Fordon {
+
+	
+	
+	
+	public void printInfo(){
+		
+	}
+	
+	public static void main(String[]args){
+		System.out.println("test");
+	}
+}

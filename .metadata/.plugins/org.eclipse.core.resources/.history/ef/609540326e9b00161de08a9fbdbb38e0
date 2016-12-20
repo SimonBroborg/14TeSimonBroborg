@@ -1,0 +1,9 @@
+
+public class Cykel extends Fordon {
+
+	public Cykel(double price, double weight, String color){
+		this.setColor(color);
+		this.setWeight(weight);
+		this.setColor(color);
+	}
+}

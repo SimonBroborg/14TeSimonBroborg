@@ -1,0 +1,8 @@
+
+public class Bil extends Fordon {
+	
+	public Bil(float price){
+		this.price = price;
+	}
+	
+}

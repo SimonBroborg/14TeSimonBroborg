@@ -1,0 +1,37 @@
+
+public class Bil extends Fordon {
+	private double horsePowers;
+	private double gas;
+	private String regNr;
+	
+	public Bil(double price, double weight, String color, double horsePower, double gas, String regNr){
+		this.setPrice(price);
+		this.setWeight(weight);
+		this.setColor(color);
+		this.horsePowers = horsePower;
+		this.gas = gas;
+		this.regNr = regNr;
+	}
+	
+	public void printInfo(){
+		System.out.println("Price: " +this.getPrice());
+		System.out.println("Weight: " + this.getWeight());
+		System.out.println("Color: " + this.getColor());
+		System.out.println("RegNr: "+ this.getRegNr());
+	}
+		
+	
+	
+	public double getGas(){
+		return gas;
+	}
+	
+	public double getHorsePower(){
+		return horsePowers;
+	}
+	
+	public String getRegNr(){
+		return regNr;
+	}
+	
+}

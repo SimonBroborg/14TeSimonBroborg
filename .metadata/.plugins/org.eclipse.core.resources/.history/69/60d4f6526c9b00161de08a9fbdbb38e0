@@ -1,0 +1,23 @@
+
+public class Fordon {
+
+	float price;
+	float weight;
+	String color;
+	
+	
+	public Fordon(){
+		
+	}
+	
+	public void printInfo(){
+		
+	}
+	
+	public static void main(String[]args){
+		Bil bil = new Bil(100);
+		
+		System.out.println(bil.price);
+		
+	}
+}

@@ -1,7 +1,0 @@
-
-public class Bicycle extends Vehicles{
-
-	public Bicycle(){
-		System.out.println("This is a bike");
-	}
-}

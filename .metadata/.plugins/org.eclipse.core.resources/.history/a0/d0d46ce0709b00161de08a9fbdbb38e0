@@ -1,0 +1,12 @@
+
+public class Rectangle extends Shape {
+
+	public Rectangle(double width, double height){
+		this.setWidth(width);
+		this.setHeight(height);
+	}
+	
+	public void calcArea(){
+		this.setArea(this.getHeight() * this.getWidth());
+	}
+}
