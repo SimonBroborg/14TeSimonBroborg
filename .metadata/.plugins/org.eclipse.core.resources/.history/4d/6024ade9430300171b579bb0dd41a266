@@ -1,0 +1,24 @@
+import javax.swing.*;
+import java.util.*;
+import java.awt.*;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class Wolf extends LivingThing{
+	 private final ImageIcon image = new ImageIcon("bin/wolf.gif"); 
+
+	    protected Point position;
+
+	    protected Pasture pasture;
+	    
+	    public Wolf(Pasture pasture, Point position) {
+	    	this.pasture   = pasture;
+	    	this.position  = position;
+	    	this.type = "sheep"; 
+	    }
+	
+	public void tick() {
+		
+		
+	}
+
+}

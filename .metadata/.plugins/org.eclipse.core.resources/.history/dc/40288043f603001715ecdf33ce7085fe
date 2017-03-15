@@ -1,0 +1,133 @@
+import javax.swing.*;
+import java.util.*;
+import java.awt.*;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class Dummy extends LivingThing {
+
+    private final ImageIcon image = new ImageIcon("bin/sheep.gif"); 
+
+    protected Point position;
+
+    protected Pasture pasture;
+    
+    
+    
+    public Dummy(Pasture pasture) {
+    	this.pasture = pasture;
+   
+    }
+
+    public Dummy(Pasture pasture, Point position) {
+    	this.pasture   = pasture;
+    	this.position  = position;
+    	this.type = "sheep"; 
+    }
+    
+    public Point getPosition() {
+		return position;
+	}
+
+	 public void setPosition(Point newPosition) { 
+	    //If the new position is inside the borders the dummy will move
+	    if(newPosition.x >= 0  && newPosition.x < this.pasture.getWidth() && newPosition.y >= 0  && newPosition.y < this.pasture.getHeight()){
+	    	Collection world = this.pasture.getEntities();
+	    	Iterator it = world.iterator();
+	    	
+	    	boolean grass = false;
+	    	boolean canMove = true; 
+	    	
+	    	
+        	
+        	
+	    	
+	    	while(it.hasNext()){
+	    		Entity e = (Entity) it.next();
+	    		if(e.getPosition().getX() == newPosition.getX() && e.getPosition().getY() == newPosition.getY()){
+	    			if(e.getType().equals("plant")){
+	    				grass = true;
+	    			}
+	    			else{
+	    				canMove = false; 
+	    			}
+	    		}
+	    		if(grass){
+	    			this.pasture.removeEntity(e);
+	    			grass = false;
+	    		}
+	    		
+	    	}
+	    	
+	    	if(canMove)
+	    		position = newPosition;  //Sets the current position equal to the new position
+	    }
+	 }
+	 
+    public void tick() {
+    	moveToClosestGrass();
+    	//setPosition(new Point((int)getClosestGrass().getX(), (int)getClosestGrass().getY()));
+    	//Tries to set a new position based on random x and y coordinates
+    	//setPosition(new Point((int)getPosition().getX() + ThreadLocalRandom.current().nextInt(-1, 1 + 1),(int)getPosition().getY() + ThreadLocalRandom.current().nextInt(-1, 1 + 1)));    	
+    }
+
+    public String getType() {
+    	return this.type;
+    }
+    
+    public ImageIcon getImage() { 
+    	return image; 
+    }
+
+    public void moveToClosestGrass(){
+    	Point plantPosition = null; //Keeps track of the position of the latest grass
+    	Point newPosition = position;  //The new position for the dummy
+    	Point closestPlantPos = position; //The closest grass
+    	
+    	Collection world = this.pasture.getEntities();
+    	Iterator it = world.iterator();
+    	int plantNumber = 0; 
+    	
+    	//Loops through all the entities
+    	while(it.hasNext()){
+    		plantNumber++; 
+    		
+    		Entity e = (Entity) it.next();
+    		
+    		//If the entity is grass 
+    		if(e.getType().equals("plant")){
+    			//Gets the plants position
+    			plantPosition = e.getPosition();
+    			
+    			//If it is the first plant the closest position is the first plants position
+    			if(plantNumber == 1){
+        			closestPlantPos = plantPosition; 
+        		}else{
+        			if(checkDistance(this.position, plantPosition) < checkDistance(this.position, closestPlantPos)){
+        				closestPlantPos = plantPosition; 
+        				
+        			}
+        		}
+    		
+    		}
+    	}
+    	
+    	if(closestPlantPos.getX() < position.getX())
+    		newPosition.x = (int) (position.getX() - 1); 
+    	else if(closestPlantPos.getX() > position.getX())
+    		newPosition.x = (int) (position.getX() +1);
+    	
+    	if(closestPlantPos.getY() < position.getY())
+    		newPosition.y = (int) (position.getY() - 1); 
+    	else if(closestPlantPos.getY() > position.getY())
+    		newPosition.y = (int) (position.getY() +1);
+    	
+    	
+    	setPosition(new Point(newPosition));
+    	
+    	
+    	
+    }
+	
+
+   
+}
