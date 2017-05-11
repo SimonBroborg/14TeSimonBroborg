@@ -1,0 +1,148 @@
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+
+import javax.swing.JFrame;
+
+public class Server {
+	public static int PORT = 5555;
+	public int snakeNr; 
+	public static int clients = 0; 
+	public static Game game; 
+	
+	//Name of the players
+	private ArrayList<String> names = new ArrayList<String>();
+	//The clients
+	private static ArrayList<PrintWriter> writers = new ArrayList<PrintWriter>();
+	
+	private static ArrayList<Float> angles = new ArrayList<Float>();
+	
+	public static void log(String message){
+		System.out.println(message);
+	}
+	
+	public static void main(String[] args) throws IOException{
+		ServerSocket listener = new ServerSocket(PORT);
+		log("Server is now running..."); 
+		
+		try{
+			while(true){
+				
+				new Handler(listener.accept()).start();  
+				clients++; 
+				if(clients > 0){
+					game = new Game();
+
+					JFrame frame = new JFrame("Achtung die kurve");
+					frame.setVisible(true);
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					frame.setSize(640, 480);
+					frame.getContentPane().setBackground(Color.WHITE);
+					frame.add(game);
+
+					frame.addKeyListener(new KeyListener() {
+
+						@Override
+						public void keyPressed(KeyEvent e) {
+							// TODO Auto-generated method stub
+							game.snakes.get(0).keyPressed(e);
+						}
+
+						@Override
+						public void keyReleased(KeyEvent e) {
+							// TODO Auto-generated method stub
+							game.snakes.get(0).keyReleased(e);
+						}
+
+						@Override
+						public void keyTyped(KeyEvent e) {
+							// TODO Auto-generated method stub
+						}
+
+					});
+
+					while (true) {
+
+						game.update();
+						game.repaint();
+						
+						
+							
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+					}
+
+					for(int i = 0; i < 1; i++){
+						game.snakes.add(new Snake(10, 10, 10 ,0, game.snakes, i));
+					}
+					
+						game.snakes.add(new Snake(100, 250, 10 ,0, game.snakes, 2));	
+				}
+			}
+		}
+		finally{
+			listener.close(); 
+		}
+		
+	}
+	
+	private static class Handler extends Thread{
+		private int snakeNr; 
+		private Socket socket; 
+		private BufferedReader in; 
+		private PrintWriter out; 
+		
+		public Handler(Socket socket){
+			this.socket = socket; 
+		}
+		
+		public void run(){
+			try {
+				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				out = new PrintWriter(socket.getOutputStream(), true); 
+				
+				writers.add(out);
+				snakeNr = writers.size() -1 ;
+				out.println(snakeNr);
+				
+				
+				while(true){
+					if(game.snakes.size() > 0){
+					float input = game.snakes.get(0).x;
+					
+						for(PrintWriter writer : writers ){
+							writer.println(input);
+						}
+					}
+				}
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally{
+				try{
+					socket.close();
+					writers.remove(out); 
+				}
+				catch(IOException e){
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+	
+	
+}
