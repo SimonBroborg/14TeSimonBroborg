@@ -9,117 +9,122 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class Client {
+public class Client{
 
-	BufferedReader in;
-	PrintWriter out;
+	static BufferedReader in;
+	static PrintWriter out;
 	JFrame frame = new JFrame("Chatter");
 	JTextField textField = new JTextField(40);
 	JTextArea messageArea = new JTextArea(8, 40);
 	
-	int snakeNr;
-	float x, y, angle; 
+	static int snakeNr;
+	float x, y;
+	static int angle; 
 	static String dataSnakeNr;
 	static String dataAngle; 
+	String serverAddress; 
+	int snakes; 
 
-	public Client() {
-		
+	public Client(String serverAddress) {
+		this.serverAddress = serverAddress; 
 	}
 
 	private void run() throws IOException {
 
-		// Make connection and initialize streams
-		String serverAddress = "192.168.56.1";
-		Socket socket = new Socket(serverAddress, 5555);
+		// Make connection and initialize streams  
+		Socket socket = new Socket(serverAddress, 6666);
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		out = new PrintWriter(socket.getOutputStream(), true);
-
-		snakeNr = Integer.parseInt(in.readLine());
-		System.out.println(snakeNr);
 		
+		
+		String input = in.readLine();
+		snakeNr = Integer.parseInt(input.substring(0,1));
+		angle = Integer.parseInt(input.substring(1,input.length() -1));
+		System.out.println(snakeNr);
 	}
 
 	public static void main(String[] args) throws Exception {
-		Client client = new Client();
+		//Creates a client 
+		Client client = new Client("192.168.210.154");
 		client.run();
 
 		Game game = new Game();
-
+		StringBuilder stringBuilder = new StringBuilder();
 		
-		
+		//Creates and sets up the JFrame
 		JFrame frame = new JFrame("Achtung die kurve");
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(640, 480);
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.add(game);
+		boolean go = false;
+		int snakes = 0; 
+		while(!go){
+			String startGame = client.in.readLine();
+			if(startGame.startsWith("GO")){
+				go = true; 
+				snakes = Integer.parseInt(startGame.substring(startGame.length()-1));
+			}
+		}
+
+		//Places all the snakes onto the board
+		for(int i = 0; i < snakes; i++){
+			game.addSnake(i *100,i*100,0);
+		}		
 		
-		dataSnakeNr = String.valueOf(game.snakes.get(client.snakeNr).snakeNr );
-		
-		
-		dataAngle = String.valueOf(game.snakes.get(client.snakeNr).angle);
-		client.out.println(dataSnakeNr + dataAngle);
-		if(dataAngle.length() == 2)
-			dataAngle = "0" + dataAngle;
-		else if(dataAngle.length() == 1)
-			dataAngle = "00"+ dataAngle; 
 		//Checks input from the player and moves the clients snake accordingly
 		frame.addKeyListener(new KeyListener() {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// TODO Auto-generated method stub
-				game.snakes.get(client.snakeNr).keyPressed(e);
-				dataSnakeNr = String.valueOf(game.snakes.get(client.snakeNr).snakeNr );
-				
-				dataAngle = String.valueOf(game.snakes.get(client.snakeNr).angle);
-				if(dataAngle.length() == 2)
-					dataAngle = "0" + dataAngle;
-				else if(dataAngle.length() == 1)
-					dataAngle = "00"+ dataAngle; 
-				
-				
+				game.snakes.get(client.snakeNr-1).keyPressed(e);
 			}
-
+ 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				game.snakes.get(client.snakeNr).keyReleased(e);
+				game.snakes.get(client.snakeNr-1).keyReleased(e);
 			}
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
+				
 			}
 
 		});
 
 		while (true) {
-
 			game.update();	
 			
-			game.repaint();
+			/*Creates a string containing the clients snake number followed by the angle of the snake
+			 * "snakeNr-1" is to get the right index
+			 */
+			stringBuilder.append(client.snakeNr-1);
+			stringBuilder.append( game.snakes.get(client.snakeNr -1).angle);
 			
-			client.out.println(dataSnakeNr + dataAngle);
+			out.println(stringBuilder.toString()); 	
 			
-			String snakeInput = client.in.readLine();
-			System.out.println(snakeInput);
-			if(game.snakes.get(Character.getNumericValue(snakeInput.charAt(0))).snakeNr-1 != client.snakeNr){
-				game.snakes.get(Character.getNumericValue(snakeInput.charAt(0))).angle = 100;
-			}
-			System.out.println(client.in.readLine()); 
+			String text = in.readLine();
+			if(!(text.substring(0,1).equals(client.snakeNr -1)))
+				game.snakes.get(Integer.parseInt(text.substring(0,1))).angle = Integer.parseInt(text.substring(1));
 			
-				
+			//Draws the updated versions of the snakes
+			game.repaint();			
+			
+			//resets the string builder
+			stringBuilder.setLength(0);
+			
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

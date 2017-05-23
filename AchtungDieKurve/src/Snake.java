@@ -22,14 +22,14 @@ public class Snake extends Thread {
 	boolean doCountDown = false;
 	int counter;
 
-	public Snake(float x, float y, float length, int angle, ArrayList<Snake> snakes, int snakeNr) {
+	public Snake(float x, float y, int angle, ArrayList<Snake> snakes, int snakeNr) {
 		this.randomGenerator = new Random();
 		this.tailColor = new Color(randomGenerator.nextInt(255), randomGenerator.nextInt(255),
 				randomGenerator.nextInt(255), 255);
 
 		this.x = x;
 		this.y = y;
-		this.length = length;
+		this.length = 0;
 		this.angle = angle;
 		this.speed = 1;
 		this.snakes = snakes;
@@ -43,22 +43,21 @@ public class Snake extends Thread {
 
 		if (!dead) {
 			angle += directionChange;
-			if(angle < 0)
-				angle+=360;
-			
-			if(angle > 360)
-				angle-=360;
+			if (angle < 0)
+				angle += 360;
+
+			if (angle > 360)
+				angle -= 360;
 
 			x += speed * Math.cos(Math.toRadians(angle));
 			y += speed * Math.sin(Math.toRadians(angle));
 			checkCollision();
 			addTail();
 		}
-
 	}
 
 	public void keyPressed(KeyEvent e) {
-		
+
 		if (e.getKeyCode() == KeyEvent.VK_A)
 			directionChange = -2;
 		if (e.getKeyCode() == KeyEvent.VK_D)
@@ -82,26 +81,26 @@ public class Snake extends Thread {
 	}
 
 	public void addTail() {
-		
 
-		if (randomGenerator.nextInt(100) > 98) {
-			doCountDown = true;
-		}
-		if (!doCountDown)
-			this.tails.add(new Tail(this.x, this.y, this.tailColor));
-		else{
-			counter--; 
-		}
-		if(counter == 0){
-			counter = randomGenerator.nextInt(30)+23; 
-			doCountDown = false; 
-		}
+		this.tails.add(new Tail(this.x, this.y, this.tailColor));
+		/*
+		 * if (randomGenerator.nextInt(100) > 98) { doCountDown = true; } if
+		 * (!doCountDown) this.tails.add(new Tail(this.x, this.y,
+		 * this.tailColor)); else{ counter--; } if(counter == 0){ counter =
+		 * randomGenerator.nextInt(30)+23; doCountDown = false; }
+		 */
 	}
 
 	public ArrayList<Tail> getTails() {
 		return tails;
 	}
 
+	/*
+	 * Checks the collision between the snake and other snakes
+	 * 
+	 * 
+	 * 
+	 */
 	public void checkCollision() {
 		for (int i = 0; i < snakes.size(); i++) {
 			for (int j = 0; j < snakes.get(i).tails.size(); j++) {
@@ -110,17 +109,17 @@ public class Snake extends Thread {
 				double distance = Math
 						.sqrt(Math.pow((this.x + 5) - (tailX + 5), 2) + Math.pow((this.y + 5) - (tailY + 5), 2));
 				if (distance <= 10) {
-					if(snakes.get(i).snakeNr == this.snakeNr && j + 20< this.tails.size()){
+					if (snakes.get(i).snakeNr == this.snakeNr && j + 20 < this.tails.size()) {
 						this.dead = true;
-					}
-					else if(snakes.get(i).snakeNr != this.snakeNr){
+					} else if (snakes.get(i).snakeNr != this.snakeNr) {
 						this.dead = true;
 					}
 				}
 			}
 		}
 	}
-	public float getAngle(){
-		return angle; 
+
+	public float getAngle() {
+		return angle;
 	}
 }

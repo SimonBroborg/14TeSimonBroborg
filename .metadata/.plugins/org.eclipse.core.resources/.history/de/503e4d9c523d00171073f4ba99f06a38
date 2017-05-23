@@ -1,0 +1,126 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Random;
+
+public class Snake extends Thread {
+	private Color tailColor;
+	Random randomGenerator;
+	public int x;
+	public int y;
+	public float length;
+	public int angle;
+	public float speed;
+	public float velX;
+	public float velY;
+	public float directionChange;
+	ArrayList<Tail> tails = new ArrayList<Tail>();
+	ArrayList<Snake> snakes = new ArrayList<Snake>();
+	boolean dead;
+	int snakeNr;
+	boolean doCountDown = false;
+	int counter;
+
+	
+	public Snake(int x, int y, int angle, ArrayList<Snake> snakes, int snakeNr) {
+		this.randomGenerator = new Random();
+		this.tailColor = new Color(randomGenerator.nextInt(255), randomGenerator.nextInt(255),
+				randomGenerator.nextInt(255), 255);
+
+		this.x = x;
+		this.y = y;
+		this.length = 0;
+		this.angle = angle;
+		this.speed = 1;
+		this.snakes = snakes;
+		this.snakeNr = snakeNr;
+		dead = false;
+		counter = randomGenerator.nextInt(30) + 23;
+
+	}
+
+	public void move() {
+
+		if (!dead) {
+			angle += directionChange;
+			if(angle < 0)
+				angle+=360;
+			
+			if(angle > 360)
+				angle-=360;
+
+			x += speed * Math.cos(Math.toRadians(angle));
+			y += speed * Math.sin(Math.toRadians(angle));
+			checkCollision();
+			//addTail();
+		}
+	}
+
+	public void keyPressed(KeyEvent e) {
+		
+		if (e.getKeyCode() == KeyEvent.VK_A)
+			directionChange = -2;
+		if (e.getKeyCode() == KeyEvent.VK_D)
+			directionChange = 2;
+
+	}
+
+	public void keyReleased(KeyEvent e) {
+		directionChange = 0;
+
+	}
+
+	public void paint(Graphics2D g) {
+		g.setColor(tailColor);
+		for (int i = 0; i < tails.size(); i++) {
+			tails.get(i).paint(g);
+		}
+		g.setColor(Color.black);
+		g.fillOval((int) x, (int) y, 10, 10);
+
+	}
+
+	public void addTail() {
+		
+
+		if (randomGenerator.nextInt(100) > 98) {
+			doCountDown = true;
+		}
+		if (!doCountDown)
+			this.tails.add(new Tail(this.x, this.y, this.tailColor));
+		else{
+			counter--; 
+		}
+		if(counter == 0){
+			counter = randomGenerator.nextInt(30)+23; 
+			doCountDown = false; 
+		}
+	}
+
+	public ArrayList<Tail> getTails() {
+		return tails;
+	}
+
+	public void checkCollision() {
+		for (int i = 0; i < snakes.size(); i++) {
+			for (int j = 0; j < snakes.get(i).tails.size(); j++) {
+				float tailX = snakes.get(i).tails.get(j).x;
+				float tailY = snakes.get(i).tails.get(j).y;
+				double distance = Math
+						.sqrt(Math.pow((this.x + 5) - (tailX + 5), 2) + Math.pow((this.y + 5) - (tailY + 5), 2));
+				if (distance <= 10) {
+					if(snakes.get(i).snakeNr == this.snakeNr && j + 20< this.tails.size()){
+						this.dead = true;
+					}
+					else if(snakes.get(i).snakeNr != this.snakeNr){
+						this.dead = true;
+					}
+				}
+			}
+		}
+	}
+	public float getAngle(){
+		return angle; 
+	}
+}

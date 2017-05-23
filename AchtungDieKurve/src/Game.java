@@ -4,6 +4,11 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,11 +21,7 @@ public class Game extends JPanel{
 	
 	public Game(){
 	
-		for(int i = 0; i < 1; i++){
-			snakes.add(new Snake(10, 10, 10 ,0, snakes, i));
-		}
 		
-			snakes.add(new Snake(100, 250, 10 ,0, snakes, 2));	
 	}
 	
 	void initGame(){		
@@ -46,9 +47,33 @@ public class Game extends JPanel{
 			snakes.get(i).move();
 		}
 	}
+	
+	public void addSnake(int x, int y, int angle){
+		Snake snake = new Snake(x, y, angle, this.snakes, snakes.size());
+		snakes.add(snake); 
+	}
+	
+	class Player extends Thread{
+		int snakeNr;
+		BufferedReader input;
+		PrintWriter output; 
+		Socket socket; 
+		
+		public Player(Socket socket, int snakeNr){
+			this.socket = socket;
+			this.snakeNr = snakeNr; 
+			
+			try{
+				input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				output = new PrintWriter(socket.getOutputStream(), true);
+			}catch(IOException e){
+				System.out.println("Player died: "  + e);
+			}
+		}
+	}
 
 	
-	public static void main(String[] args){
+	/*public static void main(String[] args){
 		Game game = new Game();
 		
 		JFrame frame = new JFrame("Achtung die kurve");
@@ -98,5 +123,5 @@ public class Game extends JPanel{
 			}
 			
 		}
-	}
+	}*/
 }
