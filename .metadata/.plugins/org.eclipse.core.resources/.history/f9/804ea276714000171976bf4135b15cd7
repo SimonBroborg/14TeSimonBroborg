@@ -19,44 +19,24 @@ import javax.swing.JTextField;
 
 public class Client{
 
-	//Declares objects
-	BufferedReader in;
-	PrintWriter out;
-	
-	JFrame frame; 
-	
-	///////////////// Declares variables ///////////////////////
-	//Integers
-	int snakeNr;
-	int angle; 
-	int snakes; 
-	
-	//Strings
-	String dataSnakeNr;
-	String dataAngle; 
-	String serverAddress; 
-	
+	static BufferedReader in;
+	static PrintWriter out;
 
-	public Client() {
-		//Sets the wanted server address
-		this.serverAddress = setServerAddress(); 
-		//Initializes variables
+	JFrame frame; 
+	static int snakeNr;
+	static int angle; 
+	static String dataSnakeNr;
+	static String dataAngle; 
+	String serverAddress; 
+	static int snakes; 
+
+	public Client(String serverAddress) {
+		this.serverAddress = serverAddress; 
 		snakes = 0; 
-		angle = 0; 
-		dataSnakeNr = null; 
-		dataAngle = null; 
-		snakeNr = 0; 
-		
 	}
 
 	private String setServerAddress(){
-		//The return value is equal to the IP address which the user choses
-		return JOptionPane.showInputDialog(
-					frame, 
-					"Enter IP address of server: ", 
-					"Welcome to Achtung Die Kurve!", 
-					JOptionPane.QUESTION_MESSAGE 
-				);
+		return JOptionPane.showInputDialog(frame, "Enter IP address of server: ", "Welcome to Achtung Die Kurve!", JOptionPane.QUESTION_MESSAGE );
 	}
 
 	private void run() throws IOException {
@@ -71,8 +51,13 @@ public class Client{
 		snakeNr = Integer.parseInt(input.substring(0,1));
 		angle = Integer.parseInt(input.substring(1,input.length() -1));
 		System.out.println(snakeNr);
-		
-		
+	}
+
+	public static void main(String[] args) throws Exception {
+		//Creates a client and sets the server address 
+		Client client = new Client("192.168.210.154");
+		client.run();
+
 		Game game = new Game();
 		StringBuilder stringBuilder = new StringBuilder();
 		
@@ -86,7 +71,7 @@ public class Client{
 		
 		boolean go = false;
 		while(!go){
-			String startGame = this.in.readLine();
+			String startGame = client.in.readLine();
 			
 			//When the server tells the clients to start, the clients also gets the number of connected players
 			if(startGame.startsWith("GO")){
@@ -95,7 +80,7 @@ public class Client{
 			}
 		}
 
-		//Checks the number of players and prints out snakes accordingly
+		//Checks 
 		for(int i = 0; i < snakes; i++){
 			game.addSnake(i *100,i*100,0);
 		}		
@@ -106,12 +91,12 @@ public class Client{
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// TODO Auto-generated method stub
-				game.snakes.get(snakeNr-1).keyPressed(e);
+				game.snakes.get(client.snakeNr-1).keyPressed(e);
 			}
  
 			@Override
 			public void keyReleased(KeyEvent e) {
-				game.snakes.get(snakeNr-1).keyReleased(e);
+				game.snakes.get(client.snakeNr-1).keyReleased(e);
 			}
 
 			@Override
@@ -127,13 +112,13 @@ public class Client{
 			/*Creates a string containing the clients snake number followed by the angle of the snake
 			 * "snakeNr-1" is to get the right index
 			 */
-			stringBuilder.append(this.snakeNr-1);
-			stringBuilder.append( game.snakes.get(this.snakeNr -1).angle);
+			stringBuilder.append(client.snakeNr-1);
+			stringBuilder.append( game.snakes.get(client.snakeNr -1).angle);
 			
 			out.println(stringBuilder.toString()); 	
 			
 			String text = in.readLine();
-			if(!(text.substring(0,1).equals(this.snakeNr -1)))
+			if(!(text.substring(0,1).equals(client.snakeNr -1)))
 				game.snakes.get(Integer.parseInt(text.substring(0,1))).angle = Integer.parseInt(text.substring(1));
 			
 			//Draws the updated versions of the snakes
@@ -149,15 +134,6 @@ public class Client{
 			}
 
 		}
-	}
-
-	public static void main(String[] args) throws Exception {
-		//Creates a client and sets the server address 
-		Client client = new Client();
-		//"192.168.210.154"
-		client.run();
-
-		
 
 	}
 
