@@ -17,17 +17,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-/*
- * The client first asks the player which IP-address
- * they want to connect to and then opens up the game window.
- * The game starts when the server tells the clients that the
- * right amount of players have connected.
- */
 public class Client{
 
 	//Declares objects
 	BufferedReader in; //Gets input from the server
 	PrintWriter out; //Writes to the server
+	
 	JFrame frame; //The game window
 	
 	///////////////// Declares variables ///////////////////////
@@ -39,79 +34,62 @@ public class Client{
 	//Strings
 	String serverAddress; //The IP address of the server which the client is connected to
 	
-	/* 
-	 * The constructor
-	 * Initializes the variables and sets the server address
-	 */
+
 	public Client() {
+		//Sets the wanted server address
+		this.serverAddress = setServerAddress(); 
+		
 		/////Initializes variables, all of them might change //////
 		angle = 0; 
 		snakes = 0; 
 		snakeNr = 0;
-		serverAddress = ""; 
-	}
 	
-	/*
-	 * Function which returns a IP-address as a String.
-	 * Opens a pop-up window with a text input.
-	 */
+		
+	}
+
 	private String setServerAddress(){
-		//The return value is equal to the IP address which the user chooses
+		//The return value is equal to the IP address which the user choses
 		return JOptionPane.showInputDialog(
-					frame, //The game frame
-					"Enter IP address of server: ", //Text right above the input
-					"Welcome to Achtung Die Kurve!", //Title of the pop-up window
+					frame, 
+					"Enter IP address of server: ", 
+					"Welcome to Achtung Die Kurve!", 
 					JOptionPane.QUESTION_MESSAGE 
 				);
 	}
 
-	/*
-	 * The run function initialized 
-	 */
 	private void run() throws IOException {
 
-		//Sets the wanted server address
-		serverAddress = setServerAddress(); 
-				
-		//Creates a socket connection to the server and initializes streams  
+		// Make connection and initialize streams  
 		Socket socket = new Socket(serverAddress, 6666);
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		out = new PrintWriter(socket.getOutputStream(), true);
 		
-		//Gets the snake number and sets the start angle
-		String input = in.readLine(); //Reads a line from the corresponding server handler
-		snakeNr = Integer.parseInt(input.substring(0,1)); //The first character in the input string is the snake number
-		angle = Integer.parseInt(input.substring(1)); //The rest of the characters display the angle of the snake
+		
+		String input = in.readLine();
+		snakeNr = Integer.parseInt(input.substring(0,1));
+		angle = Integer.parseInt(input.substring(1,input.length() -1));
+		System.out.println(snakeNr);
 		
 		
-		//Creates a game object which helps the client with the game logic. 
 		Game game = new Game();
-		
-		//The string builder helps with putting together integer/float values to a string
 		StringBuilder stringBuilder = new StringBuilder();
 		
 		//Creates and sets up the JFrame
-		frame = new JFrame("Achtung die kurve"); //The parameter is the title
-		frame.setVisible(true); //Makes sure the frame will be visible
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Closes the window when the close button is pressed
-		frame.setSize(640, 480); //The size of the window
-		frame.getContentPane().setBackground(Color.WHITE); //Sets the background to white
-		frame.add(game); //Adds the game to the frame which makes it visible
+		frame = new JFrame("Achtung die kurve");
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(640, 480);
+		frame.getContentPane().setBackground(Color.WHITE);
+		frame.add(game);
 		
-		//A loop which continues until the server tells the client to start
-		while(true){
-			String startGame = this.in.readLine(); //Gets string input from the server
+		boolean go = false;
+		while(!go){
+			String startGame = this.in.readLine();
 			
-			/* Checks if the input from the server starts with to GO.
-			 * If so the clients checks the last character of the string
-			 * which will is equal to the amount of players connected, and 
-			 * sets the "snakes" variable equal to that.
-			 * The client then breaks out of the loop
-			 * 
-			*/
+			//When the server tells the clients to start, the clients also gets the number of connected players
 			if(startGame.startsWith("GO")){
-				snakes = Integer.parseInt(startGame.substring(startGame.length()-1)); //Checks the last character of the string
-				break;
+				go = true; 
+				snakes = Integer.parseInt(startGame.substring(startGame.length()-1));
 			}
 		}
 

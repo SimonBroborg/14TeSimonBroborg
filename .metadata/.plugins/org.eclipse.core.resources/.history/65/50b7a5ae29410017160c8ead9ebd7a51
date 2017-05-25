@@ -95,23 +95,17 @@ public class Client{
 		frame.setVisible(true); //Makes sure the frame will be visible
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Closes the window when the close button is pressed
 		frame.setSize(640, 480); //The size of the window
-		frame.getContentPane().setBackground(Color.WHITE); //Sets the background to white
-		frame.add(game); //Adds the game to the frame which makes it visible
+		frame.getContentPane().setBackground(Color.WHITE); //Sets the background
+		frame.add(game);
 		
-		//A loop which continues until the server tells the client to start
-		while(true){
-			String startGame = this.in.readLine(); //Gets string input from the server
+		boolean go = false;
+		while(!go){
+			String startGame = this.in.readLine();
 			
-			/* Checks if the input from the server starts with to GO.
-			 * If so the clients checks the last character of the string
-			 * which will is equal to the amount of players connected, and 
-			 * sets the "snakes" variable equal to that.
-			 * The client then breaks out of the loop
-			 * 
-			*/
+			//When the server tells the clients to start, the clients also gets the number of connected players
 			if(startGame.startsWith("GO")){
-				snakes = Integer.parseInt(startGame.substring(startGame.length()-1)); //Checks the last character of the string
-				break;
+				go = true; 
+				snakes = Integer.parseInt(startGame.substring(startGame.length()-1));
 			}
 		}
 
